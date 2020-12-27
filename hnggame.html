@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #main{
+            width: 700px;
+            margin: auto;
+            padding-top: 20px;
+        }
+        #spansPart{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .letter-span{
+            width: 30px;
+            background-color: #bfbfbf;
+            margin-right: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 25px;
+            font-size: 30px;
+            border-radius: 7px;
+        
+        }
+        .random-letter-span{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border:none;
+            margin-right: 10px;
+            background-color: #f1f1f1;
+            padding: 10px;
+            font-size: 24px;
+            border-bottom: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="main">
+        <div id="spansPart"></div>
+    <div id="lettersPart"></div>
+    <div id="mistakesCounter"></div>
+    <div id="mistakesBar"></div>
+    </div>
+        <script>
+            let spansPart = document.getElementById('spansPart')
+            let lettersPart = document.getElementById('lettersPart')
+            const mistakesBarDiv = document.getElementById('mistakesBar')
+            const letters = 'abcdefghijklmnopqrstuvwxyz'
+            const lettersArray = Array.from(letters)
+            const theWords =['amr','ali','alaa','ammar','nada']
+            const randomWord =theWords[Math.floor(Math.random()*theWords.length)]
+            const randomWordArray=Array.from(randomWord)
+            const mistakesCounterDiv=document.getElementById('mistakesCounter')
+            mistakesCounterDiv.style.height='20px'
+            let mistakesBarInner=document.createElement('div')
+            let widthCounter=0
+            let mistakesCounter =0;
+           
+            
+            function lettersCreator(){
+               for(i=0;i < lettersArray.length;i++){
+                //span create
+                const letterSpan = document.createElement('span')
+                //attach class 
+                letterSpan.className='letter-span'
+                //span content
+                const spanContent = document.createTextNode(lettersArray[i])
+                //appending content to span
+                letterSpan.appendChild(spanContent)
+                //appending span to letters part
+                lettersPart.appendChild(letterSpan)
+               }
+            }
+            lettersCreator()
+            
+            
+            function randomWordShower(){
+                for(i=0;i < randomWordArray.length;i++){
+                    //create span for random word
+                    const randomLetterSpan=document.createElement('input')
+                    //attach class
+                    randomLetterSpan.className='random-letter-span'
+                    //making this input read only
+                    randomLetterSpan.readOnly=true
+                    //add name attribute
+                    randomLetterSpan.name='ranndomLetterName'
+                    //attach attribute containing the value of the letter
+                    randomLetterSpan.dataset.letterValue=randomWordArray[i]
+                    //appending span to spans part
+                    spansPart.appendChild(randomLetterSpan)
+                      
+                }
+            }
+            randomWordShower()
+
+            
+            function whenReachMaxMistakes(){
+                document.body.innerHTML=''
+                document.body.innerHTML='you suck!'
+            }
+            
+            function mistakesBarCreator(){
+                mistakesBarDiv.style.height='30px'
+                mistakesBarDiv.style.width='300px'
+                mistakesBarDiv.style.margin='auto'
+                mistakesBarDiv.style.backgroundColor='#e6e6e6'               
+                mistakesBarInner.style.height='30px'
+                mistakesBarInner.style.backgroundColor='#ff6f6f'
+                mistakesBarDiv.appendChild(mistakesBarInner)
+                mistakesBarInner.style.width='0px'
+            }
+            mistakesBarCreator()
+            
+            function clcikLogic(event){
+                        let any =[]
+
+                        event.target.style.backgroundColor='#808080'
+                        let UnknownWord = Array.from(document.getElementsByName('ranndomLetterName'))
+             
+                            for(i=0;i< UnknownWord.length;i++){
+
+                            if(event.target.innerHTML===UnknownWord[i].dataset.letterValue){
+                                UnknownWord[i].value=event.target.innerHTML
+                                any.push(UnknownWord[i])
+                                UnknownWord[i].removeAttribute('name')
+
+                                                                                              
+                            }
+
+                            
+                            
+                            
+                            
+                        }
+
+
+                        function checkIfWordFinshed(){
+                            let allInputs = Array.from(document.querySelectorAll('input'))
+                                let allFilledInputs=allInputs.every(ele=>{
+                                    return ele.value !==''
+                                })
+                                if(allFilledInputs){
+                                    document.body.innerHTML=''
+                                    document.body.innerHTML='you won'
+                                }
+                        }
+                        checkIfWordFinshed()
+                        
+                        
+                        if(any.length===0){
+                                ++mistakesCounter
+                                widthCounter=widthCounter+16.6
+                                mistakesBarInner.style.width=`${widthCounter}%`
+                                if(mistakesCounter===6){
+                                   whenReachMaxMistakes()
+                                }
+                                mistakesCounterDiv.innerHTML=mistakesCounter
+                            }
+
+                            event.target.removeEventListener('click',clcikLogic)
+
+                                }
+
+                                
+            function whenClickLetter(){
+                
+                let allLetters =document.querySelectorAll('.letter-span')
+                allLetters.forEach(ele=>{
+                    ele.addEventListener('click',clcikLogic)
+                            })
+            }
+            whenClickLetter()
+
+            
+        </script>
+        
+</body>
+</html>
